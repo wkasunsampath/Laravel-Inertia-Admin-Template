@@ -1,5 +1,5 @@
 import './bootstrap'
-import '../css/app.css'
+import './styles/style.scss'
 
 import { createApp, h, DefineComponent } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
@@ -9,8 +9,6 @@ import CIcon from '@coreui/icons-vue'
 import { iconsSet as icons } from '@/assets/icons'
 import { createPinia } from 'pinia'
 import DefaultLayout from './layouts/DefaultLayout.vue'
-
-import './styles/style.scss'
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel'
 
