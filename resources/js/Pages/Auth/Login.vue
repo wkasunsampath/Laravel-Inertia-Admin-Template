@@ -1,92 +1,85 @@
+<template>
+  <Head title="Log in" />
+  <div class="wrapper min-vh-100 d-flex flex-row align-items-center">
+    <CContainer>
+      <CRow class="justify-content-center">
+        <CCol :md="8">
+          <CCardGroup>
+            <CCard class="p-4">
+              <CCardBody>
+                <CForm>
+                  <h1>Login</h1>
+                  <p class="text-body-secondary">Sign In to your account</p>
+                  <CInputGroup class="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon="cil-user" />
+                    </CInputGroupText>
+                    <CFormInput placeholder="Username" autocomplete="username" />
+                  </CInputGroup>
+                  <CInputGroup class="mb-4">
+                    <CInputGroupText>
+                      <CIcon icon="cil-lock-locked" />
+                    </CInputGroupText>
+                    <CFormInput
+                      type="password"
+                      placeholder="Password"
+                      autocomplete="current-password"
+                    />
+                  </CInputGroup>
+                  <CInputGroup class="mb-4">
+                    <CFormCheck id="flexCheckDefault" label="Remember me" />
+                  </CInputGroup>
+                  <CRow>
+                    <CCol :xs="6">
+                      <CButton color="primary" class="px-4"> Login </CButton>
+                    </CCol>
+                    <CCol :xs="6" class="text-right">
+                      <CButton color="link" class="px-0"> Forgot password? </CButton>
+                    </CCol>
+                  </CRow>
+                </CForm>
+              </CCardBody>
+            </CCard>
+            <CCard class="text-white bg-primary py-5" style="width: 44%">
+              <CCardBody class="text-center">
+                <div>
+                  <h2>Sign up</h2>
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+                    incididunt ut labore et dolore magna aliqua.
+                  </p>
+                  <Link :href="route('register')">
+                    <CButton color="light" variant="outline" class="mt-3"> Register Now! </CButton>
+                  </Link>
+                </div>
+              </CCardBody>
+            </CCard>
+          </CCardGroup>
+        </CCol>
+      </CRow>
+    </CContainer>
+  </div>
+</template>
+
 <script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3'
 
 defineProps<{
-    canResetPassword?: boolean;
-    status?: string;
-}>();
+  canResetPassword?: boolean
+  status?: string
+}>()
 
 const form = useForm({
-    email: '',
-    password: '',
-    remember: false,
-});
+  email: '',
+  password: '',
+  remember: false,
+})
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => {
-            form.reset('password');
-        },
-    });
-};
+  form.post(route('login'), {
+    onFinish: () => {
+      form.reset('password')
+    },
+  })
+}
 </script>
-
-<template>
-    <GuestLayout>
-        <Head title="Log in" />
-
-        <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-            {{ status }}
-        </div>
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autofocus
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="current-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="block mt-4">
-                <label class="flex items-center">
-                    <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
-                </label>
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    v-if="canResetPassword"
-                    :href="route('password.request')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Forgot your password?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Log in
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
-</template>

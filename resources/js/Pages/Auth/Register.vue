@@ -1,105 +1,93 @@
+<template>
+  <Head title="Register" />
+  <div class="bwrapper min-vh-100 d-flex flex-row align-items-center">
+    <CContainer>
+      <CRow class="justify-content-center">
+        <CCol :md="9" :lg="7" :xl="6">
+          <CCard class="mx-4">
+            <CCardBody class="p-4">
+              <CForm @submit.prevent="submit" novalidate :validated="validationResponse">
+                <h1>Register</h1>
+                <p class="text-body-secondary">Create your account</p>
+                <CInputGroup class="mb-3">
+                  <CInputGroupText>
+                    <CIcon icon="cil-user" />
+                  </CInputGroupText>
+                  <CFormInput placeholder="Username" v-model="form.name" feedbackInvalid="This field is required" required />
+                </CInputGroup>
+                <CInputGroup class="mb-3">
+                  <CInputGroupText>@</CInputGroupText>
+                  <CFormInput
+                    type="email"
+                    placeholder="Email"
+                    v-model="form.email"
+                    autocomplete="email"
+                    feedbackInvalid="This field must be a valid email"
+                    required
+                  />
+                </CInputGroup>
+                <CInputGroup class="mb-3">
+                  <CInputGroupText>
+                    <CIcon icon="cil-lock-locked" />
+                  </CInputGroupText>
+                  <CFormInput
+                    type="password"
+                    placeholder="Password"
+                    v-model="form.password"
+                    autocomplete="new-password"
+                    feedbackInvalid="This field is required"
+                    required
+                  />
+                </CInputGroup>
+                <CInputGroup class="mb-4">
+                  <CInputGroupText>
+                    <CIcon icon="cil-lock-locked" />
+                  </CInputGroupText>
+                  <CFormInput
+                    type="password"
+                    placeholder="Repeat password"
+                    autocomplete="new-password"
+                    feedbackInvalid="This field is required"
+                    required
+                    v-model="form.password_confirmation"
+                  />
+                </CInputGroup>
+                <div class="d-grid">
+                  <CButton color="primary" type="submit">Create Account</CButton>
+                </div>
+              </CForm>
+            </CCardBody>
+          </CCard>
+        </CCol>
+      </CRow>
+    </CContainer>
+  </div>
+</template>
+
 <script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import { Head, useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
 
 const form = useForm({
-    name: '',
-    email: '',
-    password: '',
-    password_confirmation: '',
-});
+  name: '',
+  email: '',
+  password: '',
+  password_confirmation: '',
+})
 
-const submit = () => {
-    form.post(route('register'), {
-        onFinish: () => {
-            form.reset('password', 'password_confirmation');
-        },
-    });
-};
+const validationResponse = ref(false)
+
+const submit = (event: any) => {
+  const formEvent = event.currentTarget
+  if (formEvent.checkValidity() === false) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  validationResponse.value = true
+  form.post(route('register'), {
+    onFinish: () => {
+      form.reset('password', 'password_confirmation')
+    },
+  })
+}
 </script>
-
-<template>
-    <GuestLayout>
-        <Head title="Register" />
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password_confirmation" value="Confirm Password" />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password_confirmation" />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton class="ms-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
-</template>
