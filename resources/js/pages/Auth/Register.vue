@@ -13,16 +13,27 @@
                   <CInputGroupText>
                     <CIcon icon="cil-user" />
                   </CInputGroupText>
-                  <CFormInput placeholder="Username" v-model="form.name" feedbackInvalid="This field is required" required />
+                  <CFormInput
+                    aria-describedby="name"
+                    id="name"
+                    placeholder="Username"
+                    v-model="form.name"
+                    :feedbackInvalid="getError('name', 'Username field is required')"
+                    :invalid="!validationResponse && !!getError('name')"
+                    required
+                  />
                 </CInputGroup>
                 <CInputGroup class="mb-3">
                   <CInputGroupText>@</CInputGroupText>
                   <CFormInput
                     type="email"
+                    aria-describedby="email"
                     placeholder="Email"
                     v-model="form.email"
                     autocomplete="email"
-                    feedbackInvalid="This field must be a valid email"
+                    id="email"
+                    :invalid="!validationResponse && !!getError('email')"
+                    :feedbackInvalid="getError('email', 'Email field is required')"
                     required
                   />
                 </CInputGroup>
@@ -31,12 +42,15 @@
                     <CIcon icon="cil-lock-locked" />
                   </CInputGroupText>
                   <CFormInput
+                    aria-describedby="password"
                     type="password"
                     placeholder="Password"
                     v-model="form.password"
                     autocomplete="new-password"
-                    feedbackInvalid="This field is required"
+                    id="password"
                     required
+                    :invalid="!validationResponse && !!getError('password')"
+                    :feedbackInvalid="getError('password', 'Password field is required')"
                   />
                 </CInputGroup>
                 <CInputGroup class="mb-4">
@@ -44,10 +58,12 @@
                     <CIcon icon="cil-lock-locked" />
                   </CInputGroupText>
                   <CFormInput
+                    aria-describedby="password_confirmation"
                     type="password"
                     placeholder="Repeat password"
                     autocomplete="new-password"
-                    feedbackInvalid="This field is required"
+                    id="new-password"
+                    feedbackInvalid="Password retype field is required"
                     required
                     v-model="form.password_confirmation"
                   />
@@ -75,6 +91,12 @@ const form = useForm('register-form', {
   password_confirmation: '',
 })
 
+const formErrors = ref<Record<string, string>>({})
+
+const getError = (key: string, defaultFeedback?: string): string | undefined => {
+  return formErrors.value[key] ?? defaultFeedback
+}
+
 const validationResponse = ref(false)
 
 const submit = (event: any) => {
@@ -82,12 +104,17 @@ const submit = (event: any) => {
   if (formEvent.checkValidity() === false) {
     event.preventDefault()
     event.stopPropagation()
+    validationResponse.value = true
+  } else {
+    form.post(route('register'), {
+      onFinish: () => {
+        form.reset('password', 'password_confirmation')
+      },
+      onError: (error) => {
+        formErrors.value = error
+        validationResponse.value = false
+      },
+    })
   }
-  validationResponse.value = true
-  form.post(route('register'), {
-    onFinish: () => {
-      form.reset('password', 'password_confirmation')
-    },
-  })
 }
 </script>
