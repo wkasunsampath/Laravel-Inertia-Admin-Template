@@ -1,7 +1,7 @@
 <script setup>
 import { logo } from '@/assets/brand/logo'
 import { sygnet } from '@/assets/brand/sygnet'
-import { AppSidebarNav } from '@/components/AppSidebarNav'
+import { AppSidebarNav } from './AppSidebarNav'
 import { useSidebarStore } from '@/stores/sidebar'
 
 const sidebar = useSidebarStore()
@@ -23,9 +23,10 @@ const sidebar = useSidebarStore()
       </CSidebarBrand>
       <CCloseButton class="d-lg-none" dark @click="sidebar.toggleVisible()" />
     </CSidebarHeader>
-    <!-- <AppSidebarNav /> -->
+    <AppSidebarNav />
     <CSidebarFooter class="border-top d-none d-lg-flex">
       <CSidebarToggler @click="sidebar.toggleUnfoldable()" />
     </CSidebarFooter>
   </CSidebar>
 </template>
+@/layouts/components/AppSidebarNav

@@ -7,14 +7,20 @@
           <CCardGroup>
             <CCard class="p-4">
               <CCardBody>
-                <CForm>
+                <CForm @submit.prevent="submit" novalidate :validated="validationResponse">
                   <h1>Login</h1>
                   <p class="text-body-secondary">Sign In to your account</p>
                   <CInputGroup class="mb-3">
                     <CInputGroupText>
                       <CIcon icon="cil-user" />
                     </CInputGroupText>
-                    <CFormInput placeholder="Username" autocomplete="username" />
+                    <CFormInput
+                      placeholder="Username/Email"
+                      autocomplete="username"
+                      required
+                      feedbackInvalid="This field is required"
+                      v-model="form.email"
+                    />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
                     <CInputGroupText>
@@ -24,6 +30,9 @@
                       type="password"
                       placeholder="Password"
                       autocomplete="current-password"
+                      required
+                      feedbackInvalid="This field is required"
+                      v-model="form.password"
                     />
                   </CInputGroup>
                   <CInputGroup class="mb-4">
@@ -31,7 +40,7 @@
                   </CInputGroup>
                   <CRow>
                     <CCol :xs="6">
-                      <CButton color="primary" class="px-4"> Login </CButton>
+                      <CButton color="primary" class="px-4" type="submit"> Login </CButton>
                     </CCol>
                     <CCol :xs="6" class="text-right">
                       <CButton color="link" class="px-0"> Forgot password? </CButton>
@@ -44,10 +53,7 @@
               <CCardBody class="text-center">
                 <div>
                   <h2>Sign up</h2>
-                  <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-                    incididunt ut labore et dolore magna aliqua.
-                  </p>
+                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                   <Link :href="route('register')">
                     <CButton color="light" variant="outline" class="mt-3"> Register Now! </CButton>
                   </Link>
@@ -62,12 +68,16 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth'
 import { Head, Link, useForm } from '@inertiajs/vue3'
+import { ref } from 'vue'
 
 defineProps<{
   canResetPassword?: boolean
   status?: string
 }>()
+
+const auth = useAuthStore()
 
 const form = useForm({
   email: '',
@@ -75,7 +85,15 @@ const form = useForm({
   remember: false,
 })
 
-const submit = () => {
+const validationResponse = ref(false)
+
+const submit = (event: any) => {
+  const formEvent = event.currentTarget
+  if (formEvent.checkValidity() === false) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
   form.post(route('login'), {
     onFinish: () => {
       form.reset('password')

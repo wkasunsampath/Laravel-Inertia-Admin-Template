@@ -68,7 +68,7 @@
 import { Head, useForm } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
-const form = useForm({
+const form = useForm('register-form', {
   name: '',
   email: '',
   password: '',

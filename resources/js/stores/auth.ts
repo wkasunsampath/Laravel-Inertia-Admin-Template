@@ -1,19 +1,11 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
+import { usePage } from '@inertiajs/vue3'
 
 export const useAuthStore = defineStore('auth', () => {
-  const isLoggedIn = ref(false)
-  const loggedUser = ref<{ name: string; email: string }>()
+  const page = usePage()
+  const loggedUser = computed(() => page.props.auth.user)
+  const isLoggedIn = computed(() => !!loggedUser.value)
 
-  const login = (user: { name: string; email: string }) => {
-    isLoggedIn.value = true
-    loggedUser.value = user
-  }
-
-  const logout = () => {
-    isLoggedIn.value = false
-    loggedUser.value = undefined
-  }
-
-  return { isLoggedIn, loggedUser, login, logout }
+  return { isLoggedIn, loggedUser }
 })
