@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import avatar from '@/assets/images/avatars/8.jpg'
 import { router } from '@inertiajs/vue3'
+import askUser from './custom/confirm/confirmDialog'
 
 const itemsCount = 42
 
 const logout = async () => {
-  router.post('/logout', {})
-  location.reload()
+  askUser('Do you want to logout?')
+    .then(() => {
+      router.post('/logout', {})
+      location.reload()
+    })
+    .catch(() => {})
 }
 </script>
 
